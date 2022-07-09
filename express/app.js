@@ -1,11 +1,23 @@
 const express = require("express");
 const usersService = require("./users.service");
 const validateUser = require("./validator.service");
+const morgan = require("morgan");
+const config = require("config");
 
 // Create a new express application instance
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+// Public folder for static files
+// app.use(express.static("public"));
+
+// Logging environment configuration
+console.log("Application Name: " + config.get("name"));
+console.log("Database: " + config.get("configDB.host"));
+
+// Using Morgan for logging in a file
+app.use(morgan("dev"));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -85,7 +97,7 @@ app.delete("/api/users/:id", (req, res) => {
     res.status(404).send("User not found");
     return;
   }
-  
+
   // Return the deleted user
   res.send(user);
 });
